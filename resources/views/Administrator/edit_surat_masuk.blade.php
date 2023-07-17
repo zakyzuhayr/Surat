@@ -35,6 +35,11 @@
                             name="asal_surat"value="{{ $surat->asal_surat }}">
                     </div>
                     <div class="mb-3">
+                        <label for="division" class="form-label">Divisi</label>
+                        <input type="text" class="form-control" id="division"
+                            name="division"value="{{ $surat->division }}">
+                    </div>
+                    <div class="mb-3">
                         <label for="file_surat" class="form-label">File surat .pdf</label>
                         <input type="file" accept=".pdf" class="form-control" id="file_surat" name="file_surat">
                     </div>

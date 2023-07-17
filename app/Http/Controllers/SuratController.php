@@ -19,7 +19,7 @@ class SuratController extends Controller
         $surat_masuk = SuratMasuk::all();
          // Menambahkan "division" ke dalam variabel $surat_masuk
     foreach ($surat_masuk as $surat) {
-        $surat->division = $surat->Division; // Ganti dengan nama kolom division yang sesuai di tabel database
+        $surat->division = $surat->division; // Ganti dengan nama kolom division yang sesuai di tabel database
     }
 
         return view('Administrator.surat_masuk', compact('surat_masuk'));
@@ -93,6 +93,7 @@ class SuratController extends Controller
                     'tanggal_surat' => $request->tanggal_surat,
                     'tanggal_terima' => $request->tanggal_surat_terima,
                     'asal_surat' => $request->asal_surat,
+                    'division' => $request->division,
                     'perihal' => $request->perihal,
                 ]);
             }

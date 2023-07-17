@@ -24,6 +24,7 @@ class SuratKeluarController extends Controller
             'tanggal_surat' => 'required',
             'perihal' => 'required',
             'asal_surat' => 'required',
+            'penerima' => 'required',
             'file_surat' => 'required'
         ]);
 
@@ -44,6 +45,7 @@ class SuratKeluarController extends Controller
             $surat->tanggal_surat = $request->tanggal_surat;
             $surat->perihal = $request->perihal;
             $surat->asal_surat = $request->asal_surat;
+            $surat->penerima = $request->penerima;
             $surat->file_surat = $path;
             $surat->save();
         }
@@ -82,6 +84,7 @@ class SuratKeluarController extends Controller
                     'no_surat' => $request->no_surat,
                     'tanggal_surat' => $request->tanggal_surat,
                     'asal_surat' => $request->asal_surat,
+                    'penerima' => $request->penerima,
                     'perihal' => $request->perihal,
                 ]);
             }

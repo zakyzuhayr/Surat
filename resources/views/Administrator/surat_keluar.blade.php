@@ -54,6 +54,7 @@
                         <th>Tanggal Surat</th>
                         <th>Asal Surat</th>
                         <th>Perihal</th>
+                        <th>Penerima</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -66,9 +67,9 @@
                         <td>{{$no++}}</td>
                         <td>{{$surat->no_surat}}</td>
                         <td>{{$surat->tanggal_surat}}</td>
-
                         <td>{{$surat->asal_surat}}</td>
                         <td>{{$surat->perihal}}</td>
+                        <td>{{$surat->penerima}}</td>
                         <td>
                             <a class="btn btn-success" href="{{ route('view_surat_keluar_pdf', $surat->id) }}" target="_blank">View</a>
                             <a class="btn btn-warning" href="{{ route('edit_surat_keluar_view', $surat->id) }}">Edit</a>
@@ -102,7 +103,6 @@
                             <label for="tanggal_surat" class="form-label">Tanggal Surat</label>
                             <input type="date" class="form-control" id="tanggal_surat" name="tanggal_surat" value="{{old('tanggal_surat')}}">
                         </div>
-
                         <div class="mb-3">
                             <label for="perihal" class="form-label">Perihal</label>
                             <input type="text" class="form-control" id="perihal" name="perihal" value="{{old('perihal')}}">
@@ -110,6 +110,10 @@
                         <div class="mb-3">
                             <label for="asal_surat" class="form-label">Asal Surat</label>
                             <input type="text" class="form-control" id="asal_surat" name="asal_surat" value="{{old('asal_surat')}}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="penerima" class="form-label">penerima</label>
+                            <input type="text" class="form-control" id="penerima" name="penerima" value="{{old('penerima')}}">
                         </div>
                         <div class="mb-3">
                             <label for="file_surat" class="form-label">File surat .pdf</label>
