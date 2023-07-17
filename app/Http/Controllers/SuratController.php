@@ -17,6 +17,10 @@ class SuratController extends Controller
     public function surat_masuk()
     {
         $surat_masuk = SuratMasuk::all();
+         // Menambahkan "division" ke dalam variabel $surat_masuk
+    foreach ($surat_masuk as $surat) {
+        $surat->division = $surat->Division; // Ganti dengan nama kolom division yang sesuai di tabel database
+    }
 
         return view('Administrator.surat_masuk', compact('surat_masuk'));
     }
@@ -29,6 +33,7 @@ class SuratController extends Controller
             'tanggal_surat_terima' => 'required',
             'perihal' => 'required',
             'asal_surat' => 'required',
+            'division' => 'required', // Tambahkan validasi division
             'file_surat' => 'required'
         ]);
 
@@ -50,6 +55,7 @@ class SuratController extends Controller
             $surat->tanggal_terima = $request->tanggal_surat_terima;
             $surat->perihal = $request->perihal;
             $surat->asal_surat = $request->asal_surat;
+            $surat->division = $request->division; // Tambahkan kolom division
             $surat->file_surat = $path;
             $surat->save();
         }

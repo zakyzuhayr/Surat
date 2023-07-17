@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('asal_surat');
             $table->string('perihal');
             $table->string('file_surat');
+            $table->string('division');
             $table->timestamps();
         });
     }

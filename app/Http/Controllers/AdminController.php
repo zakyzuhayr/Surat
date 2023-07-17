@@ -47,7 +47,7 @@ class AdminController extends Controller
             $user->save();
             $user->attachRole($request->role);
         }
-        return redirect()->route('pengaturan')->with('success', 'Data berhasil ditambbahkan');
+        return redirect()->route('pengaturan')->with('success', 'Data berhasil ditambahkan');
     }
 
     public function edit_user($id)

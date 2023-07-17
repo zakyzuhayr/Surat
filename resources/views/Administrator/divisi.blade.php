@@ -1,7 +1,9 @@
 @extends('Template.main_template_administrator')
+@section('title')
+    Pengaturan
+@endsection
 @section('content')
-    <div class="container surat-masuk-admin">
-
+    <div class="container pengaturan-admin">
         @if (session('success'))
             <script>
                 Swal.fire({
@@ -27,64 +29,76 @@
             </script>
         @endif
         <div class="row">
+
             <div class="col">
+                @if ($errors->any())
+                    {{-- <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div> --}}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
                 <div class="h2">
-                    Surat Masuk
+                    DIVISI
                 </div>
             </div>
         </div>
         <div class="row mt-4">
             <div class="col">
-                <button type="button" class="btn btn-primary float-end mb-4" data-bs-toggle="modal" data-bs-target="#modal">
+                {{-- <a class="btn btn-primary float-end mb-4" href="">Tambah</a> --}}
+                <button type="button" class="btn btn-primary float-end mb-4" data-bs-toggle="modal"
+                    data-bs-target="#modal">
                     Tambah
                 </button>
             </div>
 
         </div>
-
-
-
         <div class="table-responsive">
 
             <table id="myTable" class="table table-striped-columns" style="width:100%">
                 <thead>
                     <tr>
                         <th>NO</th>
-                        <th>NO Surat</th>
-                        <th>Tanggal Surat</th>
-                        <th>Tanggal Terima</th>
-                        <th>Asal Surat</th>
-                        <th>Perihal</th>
-                        <th>Divisi</th>
-
+                        <th>Username</th>
+                        <th>Nama</th>
+                        <th>Email</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @php
-                        $no = 1
+                        $no = 1;
                     @endphp
-                    @foreach ($surat_masuk as $surat)
-                    <tr>
-                        <td>{{$no++}}</td>
-                        <td>{{$surat->no_surat}}</td>
-                        <td>{{$surat->tanggal_surat}}</td>
-                        <td>{{$surat->tanggal_terima}}</td>
-                        <td>{{$surat->asal_surat}}</td>
-                        <td>{{$surat->perihal}}</td>
-                        <td>{{$surat->division}}</td>
-                        <td>
-                            <a class="btn btn-success" href="{{ route('view_surat', $surat->id) }}" target="_blank">View</a>
-                            <a class="btn btn-warning" href="{{ route('edit_surat_view', $surat->id) }}">Edit</a>
-                            <a class="btn btn-danger" href="{{ route('hapus_surat', $surat->id) }}">Delete</a>
-                        </td>
-                    </tr>
+                    @foreach ($users as $user)
+                        <tr>
+                            <td>{{ $no++ }}</td>
+                            <td>{{ $user->username }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                <a class="btn btn-warning" href="{{ route('edit_user', $user->id) }}">Edit</a>
+                                <a class="btn btn-danger" href="{{ route('hapus_user', $user->id) }}">Delete</a>
+                            </td>
+                        </tr>
                     @endforeach
+
+
                 </tbody>
             </table>
         </div>
 
     </div>
+
 
     <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -95,49 +109,41 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('surat_masuk_tambah') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('tambah_user') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="no_surat" class="form-label">NO Surat</label>
-                            <input type="text" class="form-control" id="no_surat" aria-describedby="no_surat"
-                                name="no_surat">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" aria-describedby="username"
+                                name="username" value="{{ old('username') }}">
                         </div>
                         <div class="mb-3">
-                            <label for="tanggal_surat" class="form-label">Tanggal Surat</label>
-                            <input type="date" class="form-control" id="tanggal_surat" name="tanggal_surat">
+                            <label for="name" class="form-label">Nama</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                value="{{ old('name') }}">
                         </div>
                         <div class="mb-3">
-                            <label for="tanggal_surat_terima" class="form-label">Tanggal Terima</label>
-                            <input type="date" class="form-control" id="tanggal_surat_terima"
-                                name="tanggal_surat_terima">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                value="{{ old('email') }}">
                         </div>
                         <div class="mb-3">
-                            <label for="perihal" class="form-label">Perihal</label>
-                            <input type="text" class="form-control" id="perihal" name="perihal">
-                        </div>
-                        <div class="mb-3">
-                            <label for="asal_surat" class="form-label">Asal Surat</label>
-                            <input type="text" class="form-control" id="asal_surat" name="asal_surat">
-                        </div>
-                        <div class="mb-3">
-                            <label for="division" class="form-label">Divisi</label>
-                            <input class="form-control" id="division" name="division">
-                        </div>
-                        <div class="mb-3">
-                            <label for="file_surat" class="form-label">File surat .pdf</label>
-                            <input type="file" accept=".pdf" class="form-control" id="file_surat" name="file_surat">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-control" id="role" name="role">
+                                <option value="admin">admin</option>
+                                <option value="user">user</option>
+                            </select>
+                            {{-- <input type="role" class="form-control" id="role" name="role"
+                                value="{{ old('role') }}"> --}}
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
                 <div class="modal-footer">
-                     
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
         new DataTable('#myTable', {
             language: {

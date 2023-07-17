@@ -35,7 +35,9 @@
                     <a class="list-group-item list-group-item-action list-group-item-light p-3 {{ request()->routeIs('beranda') ? 'active' : '' }}"
                         href="{{ route('beranda') }}">Beranda</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3 {{ request()->routeIs('pengaturan') ? 'active' : '' }}"
-                        href="{{ route('pengaturan') }}">Pengaturan</a>
+                        href="{{ route('pengaturan') }}">User</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3 {{ request()->routeIs('Division') ? 'active' : '' }}"
+                        href="{{ route('pengaturan') }}">Divisi</a>
                 @endif
 
                 <div class="btn-group dropend">
