@@ -2,101 +2,164 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogHistory;
 use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\File;
+use App\DataTables\SuratKeluarDataTable;
 
 class SuratKeluarController extends Controller
 {
-    public function surat_keluar()
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(SuratKeluarDataTable $table)
     {
-        $surat_keluar = SuratKeluar::all();
-        return view('Administrator.surat_keluar', compact('surat_keluar'));
-    }
-    public function surat_keluar_tambah(Request $request)
-    {
-
-        $validator = Validator::make($request->all(), [
-            'no_surat' => 'required',
-            'tanggal_surat' => 'required',
-            'perihal' => 'required',
-            'asal_surat' => 'required',
-            'file_surat' => 'required'
+        return $table->render('templates.datatable', [
+            'title' => 'Surat Keluar',
+            'buttons' => '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#suratKeluarTambahModal"><i class="fas fa-plus mr-2"></i> Tambah Surat Keluar</button>'
         ]);
+    }
 
-        if ($validator->fails()) {
-            return redirect()->route('surat_keluar')->with('failed', 'Data gagal')->withInput();
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $surat = new SuratKeluar();
+
+        // dd($request->all());
+
+        $surat->no_surat = $request->no_surat;
+        $surat->sifat_surat = $request->sifat_surat;
+        $surat->perihal = $request->perihal;
+        $surat->tanggal_surat = $request->tanggal_surat;
+        $surat->surat_kepada = $request->surat_kepada;
+        $surat->pembuat_surat = auth()->user()->name;
+        $surat->status_surat = "Menunggu Verifikasi";
+        $surat->divisi_id = $request->divisi_id;
+
+        if($request->file('lampiran')) {
+            $fileName = time() . "_" . $request->file('lampiran')->getClientOriginalName();
+            $request->lampiran->move(public_path('surat/keluar'), $fileName);
+            $surat->lampiran = $fileName;
         }
 
-        if (Auth::user()) {
-            $file_surat = $request->file('file_surat');
-            $name_gen = hexdec(uniqid()) . '.' . $file_surat->getClientOriginalExtension();
-            // $path = $file_surat->storeAs('file_pdf', $name_gen);
-            $path = $file_surat->storeAs(
-                'file_pdf_keluar',
-                $name_gen
-            );
-            $surat = new SuratKeluar();
-            $surat->no_surat = $request->no_surat;
-            $surat->tanggal_surat = $request->tanggal_surat;
-            $surat->perihal = $request->perihal;
-            $surat->asal_surat = $request->asal_surat;
-            $surat->file_surat = $path;
-            $surat->save();
+        $log = new LogHistory();
+        $log->name = auth()->user()->name;
+        $log->type = "Create";
+        $log->desc = "Menambah Surat Keluar " . $request->no_surat;
+        $log->user_id = auth()->user()->id;
+        $log->save();
+
+        $surat->save();
+
+        return redirect()->back()->with('success', 'Surat Keluar berhasil ditambahkan!');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Surat  $surat
+     * @return \Illuminate\Http\Response
+     */
+    public function show(SuratKeluar $surat)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Surat  $surat
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(SuratKeluar $surat)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Surat  $surat
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request)
+    {
+        $surat = SuratKeluar::where('id', $request->surat_keluar_id)->first();
+
+        $surat->no_surat = $request->no_surat;
+        $surat->sifat_surat = $request->sifat_surat;
+        $surat->perihal = $request->perihal;
+        $surat->tanggal_surat = $request->tanggal_surat;
+        $surat->surat_kepada = $request->surat_kepada;
+        $surat->pembuat_surat = auth()->user()->name;
+        $surat->divisi_id = $request->divisi_id;
+
+        // $surat->status_surat = ;
+
+        if($request->file('lampiran')) {
+            $fileName = time() . "_" . $request->file('lampiran')->getClientOriginalName();
+            $request->lampiran->move(public_path('surat/keluar'), $fileName);
+            $surat->lampiran = $fileName;
         }
-        return redirect()->route('surat_keluar')->with('success', 'Data berhasil diinput');
-    }
 
-    public function view_surat_keluar_pdf($id)
-    {
-        $pdf_id = SuratKeluar::find($id);
-        return response()->file($pdf_id->file_surat);
-    }
-
-    public function edit_surat_keluar_view($id)
-    {
-        $surat = SuratKeluar::find($id);
-        return view('Administrator.edit_surat_keluar', compact('surat'));
-    }
-    public function edit_surat_keluar_post(Request $request)
-    {
-        $surat = SuratKeluar::find($request->id);
-
-        if (Auth::user()) {
-            if ($request->file('file_surat')) {
-                Storage::delete($surat->file_surat);
-                $file_surat = $request->file('file_surat');
-                $name_gen = hexdec(uniqid()) . '.' . $file_surat->getClientOriginalExtension();
-                $path = $file_surat->storeAs(
-                    'file_pdf_keluar',
-                    $name_gen
-                );
-                $surat->update([
-                    'file_surat' => $path
-                ]);
-            } else {
-                $surat->update([
-                    'no_surat' => $request->no_surat,
-                    'tanggal_surat' => $request->tanggal_surat,
-                    'asal_surat' => $request->asal_surat,
-                    'perihal' => $request->perihal,
-                ]);
+        if($request->file('lampiran')) {
+            if(File::exists("surat/masuk/$surat->lampiran")) {
+                File::delete("surat/masuk/$surat->lampiran");
             }
-            return redirect()->route('surat_keluar')->with('success', 'Data berhasil dirubah');
+            $fileName = time() . "_" . $request->file('lampiran')->getClientOriginalName();
+            $request->lampiran->move(public_path('surat/masuk'), $fileName);
+    
+            $surat->lampiran = $fileName;
         }
+
+        $log = new LogHistory();
+        $log->name = auth()->user()->name;
+        $log->type = "Update";
+        $log->desc = "Mengedit Surat Keluar " . $request->no_surat;
+        $log->user_id = auth()->user()->id;
+        $log->save();
+
+        $surat->save();
+
+        return redirect()->back()->with('success', 'Surat Keluar berhasil diupdate!');
     }
 
-    public function surat_keluar_hapus($id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Surat  $surat
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
     {
-        if (Auth::user()) {
-            $surat = SuratKeluar::find($id);
-            Storage::delete($surat->file_surat);
-            SuratKeluar::find($id)->delete();
-        }
-        return redirect()->route('surat_keluar')->with('success', 'Data Berhasil Dihapus');
+        $surat = SuratKeluar::where('id', $id)->first();
+        $surat->delete();
+        return redirect()->back()->with('success', 'Surat Keluar berhasil dihapus!');
     }
 
+    public function getSuratK($id)
+    {
+        $data = SuratKeluar::where('id', $id)->first();
+
+        return response()->json($data);
+    }
 }
