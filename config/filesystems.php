@@ -71,8 +71,6 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
-        public_path('file_pdf') => storage_path('app/file_pdf'),
-        public_path('file_pdf_keluar') => storage_path('app/file_pdf_keluar'),
     ],
 
 ];
